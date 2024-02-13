@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Registration</title>
+    <title>Patient Registration</title>
     <!-- Add Bootstrap CSS link -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Add your custom styles here -->
@@ -20,11 +20,6 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex; /* Use flexbox */
-            flex-direction: column; /* Stack child elements vertically */
-            align-items: center; /* Center child elements horizontally */
-            justify-content: center; /* Center child elements vertically */
-            height: 100%; /* Set container height to 100% of parent height (body) */
         }
     </style>
 </head>
@@ -46,34 +41,35 @@
         die("Connection Failed" . $conn->connect_error);
     }
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $name = $_POST["name"];
-        $specialty = $_POST["specialty"];
-        $years_exp = $_POST["years_exp"];
+        $address = $_POST["address"];
+        $age = $_POST["age"];
         $ssn = $_POST["ssn"];
-        
-        $duplicateCheckQuery = "SELECT * FROM doctor WHERE ssn = '$ssn'";
+
+    // Check for duplicate entry
+        $duplicateCheckQuery = "SELECT * FROM patient WHERE ssn = '$ssn'";
         $duplicateCheckResult = mysqli_query($conn, $duplicateCheckQuery);
-    
+
         if (mysqli_num_rows($duplicateCheckResult) > 0) {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Error</strong> Doctor with the provided SSN already exists.
+            <strong>Error</strong> Patient with the provided SSN already exists.
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">&times;</span>
             </button>
             </div>';
         } else {
-            $sql = "INSERT INTO doctor (ssn, name, specialty, years_exp) VALUES ('$ssn', '$name', '$specialty', '$years_exp')";
+            $sql = "INSERT INTO patient (ssn, name, address, age) VALUES ('$ssn', '$name', '$address', '$age')";
             $result = mysqli_query($conn, $sql);
-    
+
             if ($result) {
                 echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Success</strong> Submitted successfully.
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true">&times;</span>
                 </button>
                 </div>';
-                header("Location: /Lab-1/doctor_login.php");
+                header("Location: patient_login.php");
                 exit();
             } else {
                 echo "Error: " . $sql . "<br>" . mysqli_error($conn);
@@ -84,16 +80,20 @@
     $conn->close();
     ?>
 
-    <form method="post" action="doctor_register.php">
-        <input type="text" name="ssn" id="ssn" placeholder="SSN" required>
-        <br>
-        <input type="text" name="name" id="name" placeholder="Name" required>
-        <br>
-        <input type="text" name="specialty" id="specialty" placeholder="Specialty" required>
-        <br>
-        <input type="text" name="years_exp" id="years_exp" placeholder="Experience" required>
-        <br>
-        <button type="submit">Submit</button>
+    <form method="post" action="patient_register.php">
+        <div class="form-group">
+            <input type="text" class="form-control" name="ssn" id="ssn" placeholder="SSN" required>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="name" id="name" placeholder="Name" required>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="address" id="address" placeholder="Address" required>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="age" id="age" placeholder="Age" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
 
